@@ -35,13 +35,24 @@ public class Activity
 
     protected void ShowSpinner(int seconds)
     {
-        DateTime end = DateTime.Now.AddSeconds(seconds);
+        string[] spinner = { "|", "/", "-", "\\" };
 
-        while (DateTime.Now < end)
+        DateTime endTime = DateTime.Now.AddSeconds(seconds);
+        int i = 0;
+
+        while (DateTime.Now < endTime)
         {
-            Console.Write(".");
-            Thread.Sleep(500);
+            Console.Write(spinner[i]);
+            Thread.Sleep(200);
+            Console.Write("\b");  // This removes the previous character
+
+            i++;
+            if (i >= spinner.Length)
+            {
+                i = 0;
+            }
         }
+
         Console.WriteLine();
     }
 
