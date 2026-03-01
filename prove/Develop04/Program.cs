@@ -13,7 +13,8 @@ class Program
             Console.WriteLine("1. Breathing Activity");
             Console.WriteLine("2. Reflection Activity");
             Console.WriteLine("3. Listing Activity");
-            Console.WriteLine("4. Quit");
+            Console.WriteLine("4. Gratitude Activity");
+            Console.WriteLine("5. Quit");
             Console.Write("Choose an option: ");
 
             string choice = Console.ReadLine();
@@ -34,6 +35,11 @@ class Program
                 activity.Run();
             }
             else if (choice == "4")
+            {
+                GratitudeActivity activity = new GratitudeActivity();
+                activity.Run();
+            }
+            else if (choice == "5")
             {
                 running = false;
             }
