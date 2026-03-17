@@ -1,35 +1,58 @@
 public class ChecklistGoal : Goal
 {
-    private int _timesCompleted;
     private int _targetCount;
-    private int _bonus;
+    private int _currentCount;
+    private int _bonusPoints;
 
-    public ChecklistGoal(string name, int points, int targetCount, int bonus) : base(name, points)
+    public ChecklistGoal(string name, string description, int points,
+                         int targetCount, int bonusPoints, int currentCount = 0)
+        : base(name, description, points)
     {
-        _timesCompleted = 0;
         _targetCount = targetCount;
-        _bonus = bonus;
+        _bonusPoints = bonusPoints;
+        _currentCount = currentCount;
     }
 
     public override int RecordEvent()
     {
-        _timesCompleted++;
-        if (_timesCompleted >= _targetCount && !IsComplete)
+        if (IsComplete())
         {
-            IsComplete = true;
-            return Points + _bonus;
+            return 0;
         }
-        return Points;
+
+        _currentCount++;
+        int total = Points;
+
+        if (_currentCount == _targetCount)
+        {
+            total += _bonusPoints;
+        }
+
+        return total;
     }
 
-    public override string GetStatus()
+    public override bool IsComplete() => _currentCount >= _targetCount;
+
+    public override string GetStatusString()
     {
-        return IsComplete ? $"[X] {Name} Completed {_timesCompleted}/{_targetCount}" :
-                            $"[ ] {Name} Completed {_timesCompleted}/{_targetCount}";
+        string checkbox = IsComplete() ? "[X]" : "[ ]";
+        return $"{checkbox} {Name} ({Description}) -- Completed {_currentCount}/{_targetCount}";
     }
 
-    public override string GetStringRepresentation()
+    public override string GetSaveString()
     {
-        return $"ChecklistGoal:{Name},{Points},{_timesCompleted},{_targetCount},{_bonus},{IsComplete}";
+        // ChecklistGoal|name|description|points|target|bonus|current
+        return $"ChecklistGoal|{Name}|{Description}|{Points}|{_targetCount}|{_bonusPoints}|{_currentCount}";
+    }
+
+    public static ChecklistGoal FromData(string[] parts)
+    {
+        string name = parts[1];
+        string description = parts[2];
+        int points = int.Parse(parts[3]);
+        int target = int.Parse(parts[4]);
+        int bonus = int.Parse(parts[5]);
+        int current = int.Parse(parts[6]);
+        return new ChecklistGoal(name, description, points, target, bonus, current);
     }
 }
